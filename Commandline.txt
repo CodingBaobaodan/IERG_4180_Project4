@@ -1,0 +1,31 @@
+Linux:
+./netprobclient -send -stat 1000 -rhost localhost -rport 4180 -proto udp -pktsize 1000 -pktrate 1000 -pktnum 10 -sbufsize 2048
+./netprobclient -send -stat 1000 -rhost localhost -rport 4180 -proto tcp -pktsize 1000 -pktrate 1000 -pktnum 10 -rbufsize 2048
+
+./netprobclient -recv -stat 1000 -rhost localhost -rport 4180 -proto udp -pktsize 1000 -pktrate 1000 -pktnum 10 -rbufsize 2048
+./netprobclient -recv -stat 1000 -rhost localhost -rport 4180 -proto tcp -pktsize 1000 -pktrate 1000 -pktnum 10 -rbufsize 2048
+
+./netprobclient -response -stat 1000 -rhost localhost -rport 4180 -proto tcp -pktsize 1000 -pktrate 1 -pktnum 10 -rbufsize 2048 -sbufsize 2048 -persist yes
+./netprobclient -response -stat 1000 -rhost localhost -rport 4180 -proto tcp -pktsize 1000 -pktrate 1 -pktnum 10 -rbufsize 2048 -sbufsize 2048 -persist no
+
+./netprobclient -response -stat 1000 -rhost localhost -rport 4180 -proto udp -pktsize 1000 -pktrate 1 -pktnum 10 -rbufsize 2048 -sbufsize 2048 -persist yes
+
+./netprobclient -http -url http://localhost:4080/ -file ../http_response -proto TCP
+./netprobclient -http -url https://localhost:4081/ -file ../https_response -proto TCP
+./netprobclient -http -url https://www.google.com:443/ -file ../https_response_google -proto TCP
+
+
+
+
+
+
+Windows:
+.\netprobclient.exe -send -stat 1000 -rhost localhost -rport 4180 -proto udp -pktsize 1000 -pktrate 1000 -pktnum 10 -sbufsize 2048 -rbufsize 2048
+.\netprobclient.exe -recv -stat 1000 -rhost localhost -rport 4180 -proto udp -pktsize 1000 -pktrate 1000 -pktnum 10 -sbufsize 2048 -rbufsize 2048
+.\netprobclient.exe -recv -stat 1000 -rhost localhost -rport 4180 -proto tcp -pktsize 1000 -pktrate 1000 -pktnum 10 -rbufsize 2048
+.\netprobclient.exe -send -stat 1000 -rhost localhost -rport 4180 -proto tcp -pktsize 1000 -pktrate 1000 -pktnum 10 -rbufsize 2048
+
+Server:
+./netprobserver -sbufsize 2048 -rbufsize 2048
+./netprobserver -lhost 127.0.0.1 -sbufsize 2048 -rbufsize 2048
+./netprobserver -stat 5000 -lhttpport 4080 -lhttpsport 4081 -sbufsize 2048 -rbufsize 2048
