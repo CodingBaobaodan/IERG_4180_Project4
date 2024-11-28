@@ -10,12 +10,10 @@ Linux:
 
 ./netprobclient -response -stat 1000 -rhost localhost -rport 4180 -proto udp -pktsize 1000 -pktrate 1 -pktnum 10 -rbufsize 2048 -sbufsize 2048 -persist yes
 
+./netprobclient -http -url http://localhost:4080/ -file ../http_response -proto UDP
 ./netprobclient -http -url http://localhost:4080/ -file ../http_response -proto TCP
 ./netprobclient -http -url https://localhost:4081/ -file ../https_response -proto TCP
 ./netprobclient -http -url https://www.google.com:443/ -file ../https_response_google -proto TCP
-
-
-
 
 
 

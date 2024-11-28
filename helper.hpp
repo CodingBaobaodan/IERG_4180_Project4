@@ -117,9 +117,9 @@ typedef struct server_config
     int poolsize;                  // thread pool size (default 8 threads) 
     char *tcpcca = nullptr;        // TCP congestion control module (applied to all TCP socket created by the server)
     std::string request;           // Store HTTP/HTTPS request message
-    SSL_CTX* ssl_ctx;              // SSL context
-    std::atomic<int> *tcp_clients;  // # of active tcp connection
-    std::atomic<int> *udp_clients;  // # of active udp connection
+    SSL_CTX* ssl_ctx = nullptr;              // SSL context
+    std::atomic<int> *tcp_clients = nullptr;  // # of active tcp connection
+    std::atomic<int> *udp_clients = nullptr;  // # of active udp connection
 } server_config;
 
 // Fill by both client and server to exchange config data

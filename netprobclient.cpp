@@ -670,7 +670,7 @@ int send_data(input_client_config *config)
 
     // Step 6: clean up
     clean_up(socketfd, addr_info, buf);
-
+    memset(&server_conf, 0, sizeof(server_conf)); // server_conf may contains invalid ptr
     return 0;
 }
 
@@ -907,7 +907,7 @@ int measure_response_time(input_client_config *config) {
         
         addr_info->ai_addr = (struct sockaddr *)&server_conf.server_addr;
         addr_info->ai_addrlen = sizeof(server_conf.server_addr);
-        close(config_socketfd);
+        // close(config_socketfd);
     }
 
     // Step 3: Set the incoming and outgoing socket buffer size to rbufsize bytes.
@@ -1032,6 +1032,7 @@ int measure_response_time(input_client_config *config) {
     clean_up(config_socketfd, addr_info, NULL);
     free(send_buf);
     free(recv_buf);
+    memset(&server_conf, 0, sizeof(server_conf)); // server_conf may contains invalid ptr
     return 0;
 }
 
@@ -1217,7 +1218,7 @@ printf("Constructed HTTP Request:\n%s\n", http_request);
 
     else if (strcmp(config->protocol, "UDP") == 0) {
         // UDP: Receive the response in a single packet
-        bytes_received = recvfrom(socketfd, buffer, sizeof(buffer) - 1, 0, (struct sockaddr*)&server_addr, NULL);
+        bytes_received = recvfrom(socketfd, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
         if (bytes_received < 0) {
             perror("Failed to receive UDP response");
             freeaddrinfo(res);
@@ -1605,32 +1606,38 @@ int main(int argc, char *argv[])
     {
         input_client_config* config = parse_client_mode(--argc, ++argv, SEND);
         send_data(config);
+        free(config);
     } 
     else if (strcmp(argv[1], "-recv") == 0) 
     {
         input_client_config* config = parse_client_mode(--argc, ++argv, RECV);
         recv_data(config);
+        free(config);
     } 
     else if (strcmp(argv[1], "-response") == 0) 
     {
         input_client_config* config = parse_client_mode(--argc, ++argv, RESPONSE);
         measure_response_time(config);
+        free(config);
     }
     else if (strcmp(argv[1], "-http") == 0) 
     {
         input_client_config* config = parse_client_mode(--argc, ++argv, HTTP);
         (config->mode == HTTP) ? send_data_http(config) : send_data_https(config);
+        free(config);
     }
     else if (strcmp(argv[1], "-host") == 0) 
     {
         host_config* h_config = parse_host_mode(argc, argv);
         resolve_hostname(h_config);
+        free(h_config);
     } 
     else 
     {
         perror("Invalid mode.\n");
         return 1;
     }
+    
 
     return 0;
 }

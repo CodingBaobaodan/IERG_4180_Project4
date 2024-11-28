@@ -618,6 +618,26 @@ void *handle_udp_resp(void *arg) {
 }
 
 void *handle_udp_http(void *arg) {
+    global_config *config = (global_config *)arg;
+    client_config client_conf = config->client_conf;
+    server_config server_conf = config->server_conf;
+
+    (*server_conf.udp_clients)++;
+
+    std::string http_response = "HTTP/1.1 200 OK\r\n"
+                                "Content-Type: text/plain\r\n"
+                                "Content-Length: 1024\r\n\r\n"
+                                "Hello, UDP HTTP client!";
+
+    int bytes_sent = sendto(server_conf.udp_recv_socketfd, http_response.c_str(), http_response.size(), 0, &client_conf.client_addr, sizeof(client_conf.client_addr));
+    if(bytes_sent == -1)
+    {
+        perror("Fail to send UDP HTTP response.\n");
+        return NULL;
+    }
+
+    (*server_conf.udp_clients)--;
+
     return NULL;
 }
 
