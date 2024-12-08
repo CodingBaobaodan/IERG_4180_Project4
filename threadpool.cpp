@@ -198,11 +198,27 @@ void *handle_tcp_resp(void *arg) {
     }
 
     int communication_socket = server_conf.tcp_connect_socketfd;
+
+    // Disable Nagle Algorithm
+    int flag = 1;
+    if (setsockopt(communication_socket, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0) {
+        perror("setsockopt failed");
+        exit(EXIT_FAILURE);
+    }
+    
     int expected_sequence_num = 1;
     while (1) {
         // In non-persistence mode, server will listen & accpet the new connection from the client
         if (!client_conf.persist) {
             communication_socket = accept(nonpers_control_socketfd, NULL, NULL);
+
+            // Disable Nagle Algorithm
+            int flag = 1;
+            if (setsockopt(communication_socket, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0) {
+                perror("setsockopt failed");
+                exit(EXIT_FAILURE);
+            }
+            
             set_tcp_congestion_control(communication_socket, server_conf.tcpcca);
         }
 

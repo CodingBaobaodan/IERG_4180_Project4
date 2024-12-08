@@ -866,6 +866,15 @@ int measure_response_time(input_client_config *config) {
         return -1;
     }
 
+    // Disable Nagle Algorithm
+    int flag = 1;
+    if (strcmp("TCP", config->protocol) == 0) {
+        if (setsockopt(socketfd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0) {
+            perror("setsockopt failed");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     // Step 2: send the client config to the server
     struct addrinfo *addr_info = NULL;
     struct sockaddr local_addr;
@@ -948,6 +957,14 @@ int measure_response_time(input_client_config *config) {
         // Non-persistent TCP mode: Create a new connection for each request
         if (strcmp(config->protocol, "TCP") == 0 && !config->persist) {
             socketfd = create_socket(domain, type, protocol);
+
+            // Disable Nagle Algorithm
+            int flag = 1;
+            if (setsockopt(socketfd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0) {
+                perror("setsockopt failed");
+                exit(EXIT_FAILURE);
+            }
+
             if (create_connection(socketfd, addr_info) == -1) {
                 fprintf(stderr, "Failed to create connection in non-persistent mode\n");
                 break;
